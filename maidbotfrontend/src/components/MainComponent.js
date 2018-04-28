@@ -30,13 +30,13 @@ class MainComponent extends Component {
                 this.props.history.push('"/');
             });
         }
+        else if(!userdata.emailValidity){
+            this.setState({message : "Email format is not valid"})
+        }
         else if(!userdata.passwordValidity){
             this.setState({message : "Password too short"})
-
         }
-        else if(!userdata.emailValidity){
-            this.setState({message : "Email not in valid"})
-        }
+        
     };
 
     render(){
