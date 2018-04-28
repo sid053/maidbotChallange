@@ -11,7 +11,7 @@ var passport = require('passport');
 
 // Catch errors
 
-var index = require('./routes/index');
+//var index = require('./routes/index');   // not really needed in this case since we just want user validation
 var users = require('./routes/users');
 
 
@@ -21,16 +21,9 @@ var app = express();
 //Enable CORS
 app.use(cors({ credentials: true, origin: true }))
 
-
-//express validator
-//app.use(expressValidator(middlewareOptions));
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
-// uncomment after placing your favicon in /public
-
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
