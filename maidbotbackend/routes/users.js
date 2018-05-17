@@ -17,7 +17,7 @@ router.get('/login', function(req, res, next) {
         else if(user){
              req.session.username = user.username;
              req.session.isloggedin = true;
-            res.send({status:201});  // 201 status code for everything right and setting the session
+            res.send({status:201,message:user.username.split('@')[0] +"  Welcome to maidbot"});  // 201 status code for everything right and setting the session
         }
     })(req,res);
 });
@@ -27,7 +27,7 @@ router.get('/check',function (req,res) {
 
     if(req.session.isloggedin){
         var user = req.session.username.split('@');
-        res.send({username:user[0],status:200,message:'Welcome to maidbot'});
+        res.send({status:200,message: user[0] +' Welcome to maidbot'});
     }
     else {
         res.send({status:403});
@@ -39,7 +39,7 @@ router.get('/check',function (req,res) {
 router.post('/logout', function (req,res) {
     console.log("inside post ");
     req.session.destroy();
-    res.status(201).send();
+    res.send({status:201});
 
 })
 

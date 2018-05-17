@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import {withRouter} from "react-router-dom";
+import {connect} from "react-redux";
 
 class Message extends Component {
-
-    static propTypes = {
-        message: PropTypes.string.isRequired
-    };
 
     render() {
         return (
@@ -14,7 +12,8 @@ class Message extends Component {
                 <div className="col-md-4">
 
                         <div className="alert alert-warning" role="alert">
-                            {this.props.message}
+                            {this.props.userdata.message}
+                            {console.log("Inside the message" + this.props.userdata.message)}
                         </div>
 
                 </div>
@@ -24,4 +23,10 @@ class Message extends Component {
     }
 }
 
-export default Message;
+function mapStateToProps(userdata) {
+    return {userdata};
+}
+
+
+export default withRouter(connect(mapStateToProps)(Message));
+

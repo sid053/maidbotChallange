@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import {FormControl,FormGroup} from 'react-bootstrap'
 import Particles from 'react-particles-js';
-class SignIn extends Component {
+import {connect} from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import {message}from '../action/index'
+import * as API from "../api/Api";
 
-    static propTypes = {
-        handleSubmit: PropTypes.func.isRequired
-    };
+class SignIn extends Component {
 
     state = {
         username: '',
@@ -20,7 +20,11 @@ class SignIn extends Component {
             this.state.emailValidity = true;
             return 'success';
         }
-        return null;
+        else{
+            this.state.emailValidity = false;
+            return null;
+        }
+
     }
 
     validatePassword(){
@@ -30,10 +34,36 @@ class SignIn extends Component {
           return 'success';
         }
         else if(length>0 || length > 5){
+            this.state.passwordValidity=false;
             return 'warning';
         }
         return null;
     }
+
+    handleSubmit = (userdata) => {
+        if(userdata.passwordValidity && userdata.emailValidity) {
+            API.doLogin(userdata)
+                .then((res) => {
+                    if (res.status === 201) {
+                        console.log("After the login was succesfull")
+                        this.props.message(res)
+                        this.props.history.push("/Welcome");
+                    }
+                    else {
+                       this.props.message({message:"Wrong Username and Password"})
+                    }
+                })
+        }
+        if(!userdata.passwordValidity){
+            this.props.message({message :"Password too short"})
+        }
+        if(!userdata.emailValidity){
+            this.props.message({message :"Email format is not valid"})
+        }
+
+
+
+    };
 
         render(){
         return(
@@ -41,7 +71,7 @@ class SignIn extends Component {
                 <div className="container">
                     <div id="login-box">
                         <div className="logo">
-                            <img src="https://maidbot.com/wp-content/themes/maidbot_theme/images/loader-logo.png" />
+                            <img src="https://maidbot.com/wp-content/themes/maidbot_theme/images/loader-logo.png" alt="Logo"/>
                             <h1 className="logo-caption"><span className="tweak">L</span>ogin</h1>
                         </div>
                         <div className="controls">
@@ -74,7 +104,7 @@ class SignIn extends Component {
                                     <FormControl.Feedback/>
                                 </FormGroup>
                         <button type="button" className="btn btn-default btn-block btn-custom"
-                                onClick={() =>this.props.handleSubmit(this.state)} >Login</button>
+                                onClick={() =>this.handleSubmit(this.state)} >Login</button>
 
                             </form>
                         </div>
@@ -99,4 +129,15 @@ class SignIn extends Component {
     }
 }
 
-export default SignIn;
+function mapStateToProps(userdata) {
+    return {userdata};
+}
+
+function mapDispatchToProps(dispatch) {
+    return{
+        message:(data) => dispatch(message(data))
+    }
+}
+
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SignIn));

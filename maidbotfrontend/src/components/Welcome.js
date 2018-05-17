@@ -1,49 +1,36 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
-import PropTypes from 'prop-types';
 import * as API from '../api/Api';
-import {Panel} from 'react-bootstrap';
 import Message from "./Message";
+import {connect} from "react-redux";
+import {message} from "../action/index";
 
 class Welcome extends Component {
 
-    state={
-        username:'',
-        message:''
-    }
-
     componentWillMount(){
-        API.checkSession().then((res)=>{
-            console.log("here");
-            console.log(res);
-            if(res.status===200){
-                this.setState({
-                    username:res.username,
-                    message:res.message
 
-                });
+        API.checkSession().then((res)=>{
+            if(res.status===200){
+               this.props.message(res);
                 this.props.history.push("/Welcome");
             }
             else{
                 this.props.history.push("/")
             }
-
-        }).catch((error)=>{
-            this.props.history.push("/")
         })
     }
-
-    doLogout(){
-        API.doLogout().then((status)=>{
-            if(status===201){
-                this.props.history.push("/")
+    doLogout=()=>{
+        API.doLogout().then((res)=>{
+            console.log(res)
+            if(res.status===201){
+                this.props.message({message:"You have successfully logged out"})
+                this.props.history.push("/");
             }
-        }).catch((error)=>{
-
         })
     }
 
     render(){
+
         return(
            <div>
                         <div>
@@ -54,9 +41,11 @@ class Welcome extends Component {
                         <br/>
                         <br/>
                         <div className="col-md-12">
-                            <Message message={this.state.username+"  "+ this.state.message }/>
+                            <Message/>
                         </div>
-
+                        <div>
+                            <button className="btn btn-danger" onClick={this.doLogout}>Logout</button>
+                        </div>
                         <div className="container">
                             <div className="row">
                                 <div className="copyright" data-animation="fadeInUp">© Copyright 2017 Maidbot. All Rights Reserved</div>
@@ -69,4 +58,15 @@ class Welcome extends Component {
     }
 }
 
-export default withRouter(Welcome);
+function mapStateToProps(userdata) {
+    return {userdata};
+}
+
+function matchDispatchToProps(dispatch) {
+    return{
+    message :(data) => dispatch(message(data))
+}
+}
+
+export default withRouter(connect(mapStateToProps,matchDispatchToProps)(Welcome));
+

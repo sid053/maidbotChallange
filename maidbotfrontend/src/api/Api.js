@@ -46,7 +46,8 @@ export const doLogout = ()=>
             headers
         }
     }).then((res) => {
-        return res.status;
+        console.log(res)
+        return res.json();
     }).catch(error => {
         console.log("This is error.");
         return error;
